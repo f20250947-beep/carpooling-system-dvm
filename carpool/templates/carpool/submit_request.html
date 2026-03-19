@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head><title>Request Carpool</title></head>
+<body>
+    <h1>Request a Carpool</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label>Pickup Node:</label>
+        <select name="pickup_node">
+            {% for node in nodes %}
+                <option value="{{ node.id }}">{{ node.name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label>Dropoff Node:</label>
+        <select name="dropoff_node">
+            {% for node in nodes %}
+                <option value="{{ node.id }}">{{ node.name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <button type="submit">Submit Request</button>
+    </form>
+    <a href="{% url 'passenger_dashboard' %}">Back</a>
+</body>
+</html>

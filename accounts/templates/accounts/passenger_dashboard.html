@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head><title>Passenger Dashboard</title></head>
+<body>
+    <h1>Passenger Dashboard</h1>
+    <p>Wallet Balance: ₹{{ request.user.wallet.balance }}</p>
+    <a href="{% url 'topup_wallet' %}">Top Up Wallet</a>
+    <hr>
+    <a href="{% url 'submit_request' %}">New Carpool Request</a>
+    <hr>
+    {% for req in requests %}
+        <div>
+            <p>{{ req.pickup_node }} → {{ req.dropoff_node }}</p>
+            <p>Status: {{ req.status }}</p>
+            {% if req.status == 'pending' %}
+                <h4>Driver Offers:</h4>
+                {% for offer in req.offers.all %}
+                    <p>Driver: {{ offer.driver.username }} | Detour: {{ offer.detour }} hops | Fare: ₹{{ offer.fare }}</p>
+                    <a href="{% url 'confirm_offer' offer.id %}">Confirm</a>
+                {% empty %}
+                    <p>No offers yet.</p>
+                {% endfor %}
+                <a href="{% url 'cancel_request' req.id %}">Cancel Request</a>
+            {% endif %}
+        </div>
+        <hr>
+    {% empty %}
+        <p>No requests yet.</p>
+    {% endfor %}
+    <a href="{% url 'logout' %}">Logout</a>
+</body>
+</html>

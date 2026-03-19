@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>Top Up Wallet</title></head>
+<body>
+    <h1>Top Up Wallet</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label>Amount (₹):</label>
+        <input type="number" name="amount" min="1" required>
+        <button type="submit">Add Money</button>
+    </form>
+    <a href="{% url 'passenger_dashboard' %}">Back</a>
+</body>
+</html>

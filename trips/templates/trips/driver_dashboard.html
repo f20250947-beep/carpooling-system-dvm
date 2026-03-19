@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Driver Dashboard</title>
+</head>
+<body>
+    <h1>Driver Dashboard</h1>
+    <a href="{% url 'driver_requests' %}">View Carpool Requests</a>
+    <a href="{% url 'publish_trip' %}">Publish New Trip</a>
+    <hr>
+    <h2>Your Trips</h2>
+    {% for trip in trips %}
+        <div>
+            <p>{{ trip.start_node }} → {{ trip.end_node }}</p>
+            <p>Status: {{ trip.status }}</p>
+            <p>Max Passengers: {{ trip.max_passengers }}</p>
+            
+            <h4>Route:</h4>
+            {% for route in trip.route.all %}
+                <span>{{ route.node }} 
+                    {% if route.is_passed %}✅{% endif %}
+                </span> →
+            {% endfor %}
+
+            {% if trip.status == 'not_started' or trip.status == 'active' %}
+                <form method="post" action="{% url 'mark_node_passed' trip.id %}">
+                    {% csrf_token %}
+                    <select name="node_id">
+                        {% for route in trip.route.all %}
+                            {% if not route.is_passed %}
+                                <option value="{{ route.node.id }}">{{ route.node }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Mark Node as Reached</button>
+                </form>
+            {% endif %}
+
+            {% if trip.status == 'not_started' %}
+                <a href="{% url 'cancel_trip' trip.id %}">Cancel Trip</a>
+            {% endif %}
+        </div>
+        <hr>
+    {% empty %}
+        <p>No trips yet.</p>
+    {% endfor %}
+    <a href="{% url 'logout' %}">Logout</a>
+</body>
+</html>

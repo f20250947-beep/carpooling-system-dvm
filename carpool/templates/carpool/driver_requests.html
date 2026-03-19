@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Carpool Requests</title></head>
+<body>
+    <h1>Nearby Carpool Requests</h1>
+    {% for item in trip_requests %}
+        <div>
+            <p>Passenger: {{ item.request.passenger.username }}</p>
+            <p>Pickup: {{ item.request.pickup_node }} | Dropoff: {{ item.request.dropoff_node }}</p>
+            <p>Detour: {{ item.detour }} hops | Fare: ₹{{ item.fare }}</p>
+            <a href="{% url 'make_offer' item.request.id %}">Make Offer</a>
+        </div>
+        <hr>
+    {% empty %}
+        <p>No nearby requests.</p>
+    {% endfor %}
+    <a href="{% url 'driver_dashboard' %}">Back to Dashboard</a>
+</body>
+</html>

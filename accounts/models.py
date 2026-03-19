@@ -33,3 +33,26 @@ class User(AbstractUser):
 
     def is_passenger(self):
         return self.role == self.PASSENGER
+    
+class Wallet(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    balance = models.FloatField(default=0.0)
+
+    def __str__(self):
+        return f"{self.user.username} - ₹{self.balance}"
+
+class Transaction(models.Model):
+    TYPE_CHOICES = [
+        ('topup', 'Top Up'),
+        ('fare_deduct', 'Fare Deduction'),
+        ('earning', 'Driver Earning'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    amount = models.FloatField()
+    transaction_type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    trip = models.ForeignKey('trips.Trip', on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.transaction_type} - ₹{self.amount}"   
