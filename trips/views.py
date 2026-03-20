@@ -71,3 +71,11 @@ def mark_node_passed(request, trip_id):
     except TripRoute.DoesNotExist:
         pass
     return redirect('driver_dashboard')
+
+@login_required
+def start_trip(request, trip_id):
+    trip = get_object_or_404(Trip, id=trip_id, driver=request.user)
+    if trip.status == 'not_started':
+        trip.status = 'active'
+        trip.save()
+    return redirect('driver_dashboard')

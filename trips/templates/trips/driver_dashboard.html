@@ -22,7 +22,12 @@
                 </span> →
             {% endfor %}
 
-            {% if trip.status == 'not_started' or trip.status == 'active' %}
+            {% if trip.status == 'not_started' %}
+                <a href="{% url 'start_trip' trip.id %}">Start Trip</a>
+                <a href="{% url 'cancel_trip' trip.id %}">Cancel Trip</a>
+            {% endif %}
+
+            {% if trip.status == 'active' %}
                 <form method="post" action="{% url 'mark_node_passed' trip.id %}">
                     {% csrf_token %}
                     <select name="node_id">
@@ -34,10 +39,6 @@
                     </select>
                     <button type="submit">Mark Node as Reached</button>
                 </form>
-            {% endif %}
-
-            {% if trip.status == 'not_started' %}
-                <a href="{% url 'cancel_trip' trip.id %}">Cancel Trip</a>
             {% endif %}
         </div>
         <hr>
