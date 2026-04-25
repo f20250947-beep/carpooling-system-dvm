@@ -128,7 +128,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 AUTH_USER_MODEL = 'accounts.User'        #YE BATAYEGA KI USER KE LIYE CUSTOM USER MODEL USE KARO
 
-SITE_ID = 2
+SITE_ID = 1
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
