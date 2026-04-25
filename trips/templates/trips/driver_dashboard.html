@@ -46,5 +46,6 @@
         <p>No trips yet.</p>
     {% endfor %}
     <a href="{% url 'logout' %}">Logout</a>
+    {{ user.role }}
 </body>
 </html>

@@ -1,35 +1,31 @@
 from trips.utils import find_route
 
-UNIT_PRICE = 10
-BASE_FEE = 5
+def calculate_detour(trip, pickup, drop):
+    driver_start = trip.start_node
+    driver_end = trip.end_node
 
-def calculate_detour(trip, pickup_node, dropoff_node):
-    remaining_route = list(trip.route.filter(is_passed=False).values_list('node', flat=True))
-    if not remaining_route:
+    # original route
+    original = find_route(driver_start, driver_end)
+    if not original:
         return None, None
-    
-    from network.models import Node
-    remaining_nodes = [Node.objects.get(id=nid) for nid in remaining_route]
-    
-    original_length = len(remaining_nodes)
-    
-    # New route with pickup and dropoff inserted
-    end_node = remaining_nodes[-1]
-    new_route = find_route(remaining_nodes[0], pickup_node)
-    if not new_route:
+
+    # new route parts
+    path1 = find_route(driver_start, pickup)
+    path2 = find_route(pickup, drop)
+    path3 = find_route(drop, driver_end)
+
+    if not path1 or not path2 or not path3:
         return None, None
-    route_to_dropoff = find_route(pickup_node, dropoff_node)
-    if not route_to_dropoff:
-        return None, None
-    route_to_end = find_route(dropoff_node, end_node)
-    if not route_to_end:
-        return None, None
-    
-    new_length = len(new_route) + len(route_to_dropoff) + len(route_to_end) - 3
-    detour = new_length - original_length
-    
-    # Fare calculation
-    n = len(route_to_dropoff) - 1
-    fare = UNIT_PRICE * sum(1/(i+1) for i in range(n)) + BASE_FEE
-    
-    return detour, round(fare, 2)
+
+    # combine paths (avoid duplicate nodes)
+    new_path = path1[:-1] + path2[:-1] + path3
+
+    original_len = len(original) - 1
+    new_len = len(new_path) - 1
+
+    detour = new_len - original_len
+
+    # simple fare (you can upgrade later)
+    fare = 10 + detour * 5
+
+    return detour, fare

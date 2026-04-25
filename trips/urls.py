@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
     path('publish/', views.publish_trip, name='publish_trip'),
     path('dashboard/', views.driver_dashboard, name='driver_dashboard'),

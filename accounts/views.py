@@ -4,12 +4,14 @@ from django.contrib import messages
 from .forms import RegisterForm
 from django.contrib.auth.decorators import login_required
 from .models import User, Wallet, Transaction
+from django.contrib.auth.decorators import login_required
 
 def redirect_by_role(user):
     if user.is_staff or user.is_superuser:
         return redirect('/admin/')
     if user.is_driver():
-        return redirect('driver_dashboard')
+        return redirect('/trips/dashboard/')
+    # passenger ke liye
     return redirect('passenger_dashboard')
 
 def register_view(request):
@@ -17,11 +19,19 @@ def register_view(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            Wallet.objects.create(user=user)
-            login(request, user)
-            return redirect_by_role(user)
+            Wallet.objects.get_or_create(user=user)
+
+            user = authenticate(
+                username=user.username,
+                password=form.cleaned_data['password1']
+            )
+
+            if user is not None:
+                login(request, user)
+                return redirect_by_role(user)
     else:
         form = RegisterForm()
+
     return render(request, 'accounts/register.html', {'form': form})
 
 def login_view(request):
@@ -43,8 +53,8 @@ def logout_view(request):
 def home(request):
     return render(request, 'home.html')
 
-def driver_dashboard(request):
-    return render(request, 'accounts/driver_dashboard.html')
+def old_driver_dashboard(request):
+    return redirect('/trips/dashboard/')
 
 def passenger_dashboard(request):
     return render(request, 'accounts/passenger_dashboard.html')
@@ -65,3 +75,14 @@ def topup_wallet(request):
             messages.success(request, f'₹{amount} added to wallet!')
         return redirect('passenger_dashboard')
     return render(request, 'accounts/topup.html')
+
+@login_required
+def choose_role(request):
+    if request.method == 'POST':
+        role = request.POST.get('role')
+        request.user.role = role
+        request.user.save()
+
+        return redirect_by_role(request.user)
+
+    return render(request, 'accounts/choose_role.html')

@@ -8,5 +8,6 @@ urlpatterns = [
     path('confirm/<int:offer_id>/', views.confirm_offer, name='confirm_offer'),
     path('driver/requests/', views.driver_requests, name='driver_requests'),
     path('offer/<int:request_id>/', views.make_offer, name='make_offer'),
+    path('driver/dashboard/', views.driver_dashboard, name='driver_dashboard'),
     
 ]

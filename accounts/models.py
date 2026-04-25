@@ -14,10 +14,11 @@ class User(AbstractUser):
     ]
 
     role = models.CharField(
-        max_length=20,
-        choices=ROLE_CHOICES,
-        default=PASSENGER
-    )
+    max_length=20,
+    choices=ROLE_CHOICES,
+    null=True,
+    blank=True
+)
 
     groups = models.ManyToManyField(
         'auth.Group',
